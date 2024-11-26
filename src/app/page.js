@@ -37,7 +37,7 @@ export default function Home() {
         throw new Error(data.error || 'Errore durante la generazione dell\'immagine');
       }
 
-      if (!data.data?.[0]?.url) {
+      if (!data?.data?.[0]) {
         throw new Error('Formato risposta non valido');
       }
 
