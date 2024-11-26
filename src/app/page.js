@@ -9,7 +9,7 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState(null);
   // Nuovi stati per la gestione del file
   const [imageFile, setImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [imageWeight, setImageWeight] = useState(50);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -100,6 +100,23 @@ export default function Home() {
               </div>
             )}
           </div>
+
+          {/* Slider per il peso dell'immagine - visibile solo se c'è un'immagine */}
+          {imageFile && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">
+                Peso dell&apos;immagine: {imageWeight}%
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="100"
+                value={imageWeight}
+                onChange={(e) => setImageWeight(parseInt(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          )}
 
           <input
             type="text"
