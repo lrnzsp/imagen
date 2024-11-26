@@ -1,17 +1,13 @@
-```javascript
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
-  const [imageWeight, setImageWeight] = useState(0.5); // Default image weight
-  const [referenceImage, setReferenceImage] = useState(null);
-  const fileInputRef = useRef(null);
-
+  const [editing, setEditing] = useState(false); // Add editing state
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -19,86 +15,107 @@ export default function Home() {
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('prompt', prompt);
-      formData.append('image_weight', imageWeight); 
-      if (referenceImage) {
-        formData.append('reference_image', referenceImage);
-      }
-
       const res = await fetch('/api/generate', {
         method: 'POST',
-        body: formData, // Send FormData directly
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, editing }) // Send editing flag
       });
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Errore durante la generazione');
-      }
+      if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
 
       setImageUrl(data.data[0].url);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+      setEditing(false); // Reset editing after submission
     }
   }
 
-  const handleImageChange = (event) => {
-    setReferenceImage(event.target.files[0]);
+
+  const handleRemix = async () => {
+    if (!imageUrl) return;
+
+    setEditing(true); // Set editing mode before sending remix request
+
+
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, editing: true, imageUrl }) // Send editing flag and image URL
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
+      setImageUrl(data.data[0].url);
+    } catch (err) {
+
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      setEditing(false);
+
+    }
   };
+
 
 
   return (
     <main className="p-8">
       <div className="max-w-xl mx-auto">
-        {/* ... (rest of the code) */}
+        <h1 className="text-2xl font-bold mb-8 text-center">
+          Generatore di Immagini
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* ... (input and button) */}
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Descrivi l'immagine..."
+            className="w-full p-2 border rounded"
+            required
+          />
 
-           {/* Reference Image Upload */}
-          <div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              accept="image/*" 
-              className="mt-2"
-            />
-            {referenceImage && (
-              <p className="text-sm mt-1">
-                File selezionato: {referenceImage.name}
-              </p>
-            )}
-            <button type="button" onClick={() => {setReferenceImage(null); if(fileInputRef.current) fileInputRef.current.value = null;}} className="mt-2 text-red-500 text-sm hover:underline">Rimuovi Immagine</button> {/* Clear button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
+          >
+            {loading ? 'Generazione...' : 'Genera Immagine'}
+          </button>
 
-
-          </div>
-
-           {/* Image Weight Slider */}
-          <div className="flex items-center space-x-2">
-            <label htmlFor="imageWeight" className="text-sm">Image Weight:</label>
-            <input
-              type="range"
-              id="imageWeight"
-              name="imageWeight"
-              min="0"
-              max="1"
-              step="0.1"
-              value={imageWeight}
-              onChange={(e) => setImageWeight(parseFloat(e.target.value))}
-              className="w-full" 
-            />
-            <span className="text-sm">{imageWeight}</span>
-          </div>
-
-
-          {/* ... (rest of the form) */}
+          {imageUrl && (
+            <button
+              onClick={handleRemix}
+              disabled={loading}
+              className="w-full bg-green-500 text-white p-2 rounded disabled:bg-gray-400 mt-2"
+            >
+              {loading ? 'Remixing...' : 'Remix'}
+            </button>
+          )}
         </form>
 
-        {/* ... (rest of the code) */}
+        {error && (
+          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        {imageUrl && (
+          <div className="mt-8">
+            <img
+              src={imageUrl}
+              alt="Immagine generata"
+              className="w-full rounded shadow-lg"
+            />
+          </div>
+        )}
       </div>
     </main>
   );
