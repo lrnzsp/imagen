@@ -1,8 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Imagen - Generatore di Immagini',
-  description: 'Genera immagini con Ideogram AI',
+  title: 'Generatore di Immagini',
+  description: 'Crea immagini con AI',
 }
 
 export default function RootLayout({ children }) {
