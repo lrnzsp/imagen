@@ -11,13 +11,14 @@ export default function Home() {
   const [imageWeight, setImageWeight] = useState(50);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
       let res;
+      
       if (imageFile) {
         // Richiesta remix con immagine
         const formData = new FormData();
@@ -39,34 +40,35 @@ export default function Home() {
       }
 
       const data = await res.json();
+      
       if (!res.ok) {
         throw new Error(data.error || 'Errore durante l\'elaborazione');
       }
-      
+
       setImageUrl(data.data[0].url);
-      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  function handleFileChange(e) {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
     }
-  }
+  };
 
-  function clearImage() {
+  const clearImage = () => {
     setImageFile(null);
-    setPreviewUrl(null);
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
     }
-  }
+    setPreviewUrl(null);
+  };
 
   return (
     <main className="p-8">
@@ -118,7 +120,7 @@ export default function Home() {
           {imageFile && (
             <div className="space-y-2">
               <label className="block text-sm font-medium">
-                Peso dell'immagine: {imageWeight}%
+                Peso dell&apos;immagine: {imageWeight}%
               </label>
               <input
                 type="range"
