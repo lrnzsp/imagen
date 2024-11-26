@@ -1,54 +1,140 @@
-import { NextResponse } from 'next/server';
+'use client';
 
-export const runtime = 'edge';
+import { useState } from 'react';
 
-export async function POST(req) {
-  try {
-    const { prompt, editing, imageUrl } = await req.json(); // Receive editing flag and imageUrl
-    let requestBody;
+export default function Home() {
+  const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  // Nuovi stati per la gestione del file
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
-    if (editing && imageUrl) {
-      requestBody = {
-        image_request: {
-          prompt,
-          aspect_ratio: "ASPECT_1_1",
-          model: "V_2",
-          magic_prompt_option: "AUTO",
-          use_image_strength: true, // Enable image strength for remix
-          image_strength: 0.4, // You may tweak this value
-          init_image: imageUrl // Initial image for remix
-        }
-      };
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    } else {
-      requestBody = {
-        image_request: {
-          prompt,
-          aspect_ratio: "ASPECT_1_1",
-          model: "V_2",
-          magic_prompt_option: "AUTO"
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
 
-        }
-      };
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
+      
+      setImageUrl(data.data[0].url);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-
-
-
-
-    const res = await fetch('https://api.ideogram.ai/generate', {
-      method: 'POST',
-      headers: {
-        'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    const data = await res.json();
-    return NextResponse.json(data);
-
-  } catch (e) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
   }
+
+  // Nuova funzione per gestire il caricamento del file
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  }
+
+  // Nuova funzione per rimuovere il file
+  function clearImage() {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setImageFile(null);
+    setPreviewUrl(null);
+  }
+
+  return (
+    <main className="p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold mb-8 text-center">
+          Generatore di Immagini
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Nuovo componente per l'upload del file */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium mb-2">
+              Immagine di riferimento (opzionale)
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+                id="file-upload"
+                accept="image/*"
+              />
+              <label
+                htmlFor="file-upload"
+                className="cursor-pointer bg-white px-4 py-2 border rounded hover:bg-gray-50"
+              >
+                Carica immagine
+              </label>
+              {imageFile && (
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  className="px-2 py-1 text-red-600 hover:bg-red-50 rounded"
+                >
+                  Rimuovi
+                </button>
+              )}
+            </div>
+            {previewUrl && (
+              <div className="mt-2">
+                <img
+                  src={previewUrl}
+                  alt="Anteprima"
+                  className="w-full max-h-48 object-contain rounded border"
+                />
+              </div>
+            )}
+          </div>
+
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Descrivi l'immagine..."
+            className="w-full p-2 border rounded"
+            required
+          />
+          
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
+          >
+            {loading ? 'Generazione...' : 'Genera Immagine'}
+          </button>
+        </form>
+
+        {error && (
+          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        {imageUrl && (
+          <div className="mt-8">
+            <img 
+              src={imageUrl} 
+              alt="Immagine generata"
+              className="w-full rounded shadow-lg" 
+            />
+          </div>
+        )}
+      </div>
+    </main>
+  );
 }
