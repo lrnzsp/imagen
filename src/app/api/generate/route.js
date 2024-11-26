@@ -52,7 +52,7 @@ export async function POST(req) {
     const res = await fetch('https://api.ideogram.ai/generate', {
       method: 'POST',
       headers: {
-        'Api-Key': 'YOUR_IDEOGRAM_API_KEY', // Replace with your key
+        'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg ', // Replace with your key
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ image_request }),
