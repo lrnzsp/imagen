@@ -1,12 +1,12 @@
-// src/app/api/generate/route.js
 import { NextResponse } from 'next/server';
 import formidable from 'formidable';
+import fs from 'fs/promises';  // Import fs/promises
 
 export const runtime = 'edge';
 
 export const config = {
   api: {
-    bodyParser: false, // Disable Next.js's default body parser
+    bodyParser: false, // Disable Next.js's body parser
   },
 };
 
@@ -14,57 +14,82 @@ export async function POST(req) {
   try {
     const form = new formidable.IncomingForm();
 
-    // Use a promise to parse the form data
+
     const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
+        form.parse(req, (err, fields, files) => {
+          if (err) reject(err);
+          resolve({ fields, files });
+        });
       });
-    });
+
+
 
 
 
     const prompt = fields.prompt;
     const image_weight = parseFloat(fields.image_weight || 0.5);
-  
+
 
 
     let image_request = {
-          prompt,
-          aspect_ratio: "ASPECT_1_1",
-          model: "V_2",
-          magic_prompt_option: "AUTO"
-        };
+      prompt,
+      aspect_ratio: "ASPECT_1_1",
+      model: "V_2",
+      magic_prompt_option: "AUTO",
 
-    if(files.reference_image){
-      const imageBuffer = await fs.readFile(files.reference_image.filepath);
-      const imageBase64 = Buffer.from(imageBuffer).toString('base64');
 
-      image_request = {
-        ...image_request,
-        image: imageBase64,
-        image_weight: image_weight,
+    };
+
+
+
+
+    if (files.reference_image) {
+        try {
+
+          const imageBuffer = await fs.readFile(files.reference_image.filepath);
+          const imageBase64 = imageBuffer.toString('base64');
+
+          image_request = {
+            ...image_request,
+            image: imageBase64,
+            image_weight: image_weight
+          };
+
+
+
+
+
+        } catch (readError) {
+          console.error("Error reading or encoding image:", readError);
+          return NextResponse.json({ error: "Failed to process image file." }, { status: 500 });
+
+        }
       }
 
-    }
+
+
 
 
     const res = await fetch('https://api.ideogram.ai/generate', {
       method: 'POST',
       headers: {
-        'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg ', // Replace with your key
+        'Api-Key': 'YOUR_IDEOGRAM_API_KEY', // Replace!
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ image_request }),
     });
 
-    const data = await res.json();
 
+
+    const data = await res.json();
     return NextResponse.json(data);
+
+
   } catch (e) {
-    console.error(e)
+
+    console.error("API request error:", e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
+Key changes and explanations:
 
-Key
