@@ -7,9 +7,9 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
-  // Nuovi stati per la gestione del file
   const [imageFile, setImageFile] = useState(null);
   const [imageWeight, setImageWeight] = useState(50);
+  const [previewUrl, setPreviewUrl] = useState(null);  // Aggiunto questo stato
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -35,7 +35,6 @@ export default function Home() {
     }
   }
 
-  // Nuova funzione per gestire il caricamento del file
   function handleFileChange(e) {
     const file = e.target.files[0];
     if (file) {
@@ -44,7 +43,6 @@ export default function Home() {
     }
   }
 
-  // Nuova funzione per rimuovere il file
   function clearImage() {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
@@ -61,7 +59,6 @@ export default function Home() {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nuovo componente per l'upload del file */}
           <div className="space-y-2">
             <label className="block text-sm font-medium mb-2">
               Immagine di riferimento (opzionale)
@@ -101,7 +98,6 @@ export default function Home() {
             )}
           </div>
 
-          {/* Slider per il peso dell'immagine - visibile solo se c'è un'immagine */}
           {imageFile && (
             <div className="space-y-2">
               <label className="block text-sm font-medium">
