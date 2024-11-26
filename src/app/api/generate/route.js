@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 
-export async function POST(request) {
-  try {
-    const { prompt } = await request.json();
+export const runtime = 'edge';
 
-    const response = await fetch('https://api.ideogram.ai/generate', {
+export async function POST(req) {
+  try {
+    const { prompt } = await req.json();
+
+    const res = await fetch('https://api.ideogram.ai/generate', {
       method: 'POST',
       headers: {
         'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg',
@@ -20,14 +22,10 @@ export async function POST(request) {
       })
     });
 
-    const data = await response.json();
-    
+    const data = await res.json();
     return NextResponse.json(data);
-  } catch (error) {
-    console.error('Error during image generation:', error);
-    return NextResponse.json(
-      { error: 'Errore durante la generazione dell\'immagine' },
-      { status: 500 }
-    );
+    
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
