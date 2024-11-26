@@ -17,31 +17,37 @@ export default function Home() {
     setError(null);
 
     try {
-      let res;
-      if (imageFile) {
-        // Se c'è un'immagine, usa l'endpoint remix
-        const formData = new FormData();
-        formData.append('image_file', imageFile);
-        formData.append('prompt', prompt);
-        formData.append('image_weight', imageWeight.toString());
-
-        res = await fetch('/api/remix', {
-          method: 'POST',
-          body: formData
-        });
-      } else {
-        // Altrimenti usa l'endpoint generate originale
-        res = await fetch('/api/generate', {
+      // Se non c'è un'immagine caricata, usa l'endpoint di generazione normale
+      if (!imageFile) {
+        const res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt })
         });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
+        setImageUrl(data.data[0].url);
+        return;
       }
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore durante l\'elaborazione');
-      setImageUrl(data.data[0].url);
+      // Se c'è un'immagine, procedi con il remix
+      const formData = new FormData();
+      formData.append('image_file', imageFile);
+      formData.append('prompt', prompt);
+      formData.append('image_weight', imageWeight.toString());
+
+      const remixRes = await fetch('/api/remix', {
+        method: 'POST',
+        body: formData
+      });
+
+      const remixData = await remixRes.json();
+      if (!remixRes.ok) throw new Error(remixData.error || 'Errore durante il remix');
+      setImageUrl(remixData.data[0].url);
+      
     } catch (err) {
+      console.error('Error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -95,7 +101,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={clearImage}
-                    className="text-red-600 hover:text-red-700"
+                    className="px-2 py-1 text-red-600 hover:bg-red-50 rounded"
                   >
                     Rimuovi
                   </button>
