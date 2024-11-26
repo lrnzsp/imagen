@@ -1,3 +1,7 @@
+import { NextResponse } from 'next/server';
+
+export const runtime = 'edge';
+
 export async function POST(request) {
   try {
     const formData = await request.formData();
@@ -5,10 +9,16 @@ export async function POST(request) {
     const prompt = formData.get('prompt');
     const imageWeight = formData.get('image_weight');
 
-    // Creiamo un nuovo FormData per la richiesta a Ideogram
-    const ideogramFormData = new FormData();
-    ideogramFormData.append('image_file', imageFile);
-    ideogramFormData.append('image_request', JSON.stringify({
+    if (!imageFile || !prompt) {
+      return NextResponse.json(
+        { error: 'File immagine e prompt sono richiesti' },
+        { status: 400 }
+      );
+    }
+
+    const apiFormData = new FormData();
+    apiFormData.append('image_file', imageFile);
+    apiFormData.append('image_request', JSON.stringify({
       prompt,
       aspect_ratio: "ASPECT_1_1",
       model: "V_2",
@@ -19,21 +29,17 @@ export async function POST(request) {
     const response = await fetch('https://api.ideogram.ai/remix', {
       method: 'POST',
       headers: {
-        'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg'
+        'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg',
       },
-      body: ideogramFormData
+      body: apiFormData,
     });
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error);
-    }
-
     const data = await response.json();
-    return Response.json(data);
+    return NextResponse.json(data);
+
   } catch (error) {
     console.error('Remix error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Errore durante il remix dell\'immagine' },
       { status: 500 }
     );
