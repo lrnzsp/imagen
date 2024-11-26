@@ -1,47 +1,27 @@
 import { NextResponse } from 'next/server';
+import { fetch } from 'node-fetch'; // o altro client HTTP
 
-export const runtime = 'edge';
-
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const formData = await request.formData();
+    const formData = await req.formData();
+    const imageRequest = JSON.parse(formData.get('image_request'));
     const imageFile = formData.get('image_file');
-    const prompt = formData.get('prompt');
-    const imageWeight = formData.get('image_weight');
 
-    if (!imageFile || !prompt) {
-      return NextResponse.json(
-        { error: 'File immagine e prompt sono richiesti' },
-        { status: 400 }
-      );
-    }
 
-    const apiFormData = new FormData();
-    apiFormData.append('image_file', imageFile);
-    apiFormData.append('image_request', JSON.stringify({
-      prompt,
-      aspect_ratio: "ASPECT_1_1",
-      model: "V_2",
-      magic_prompt_option: "AUTO",
-      image_weight: parseInt(imageWeight)
-    }));
-
-    const response = await fetch('https://api.ideogram.ai/remix', {
+    const res = await fetch('https://api.ideogram.ai/remix', {
       method: 'POST',
       headers: {
-        'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg',
+        'Api-Key': process.env.IDEOGRAM_API_KEY, // Imposta la tua API key
+        'Content-Type': 'multipart/form-data;boundary=<calculated boundary>', // fetch aggiungerà il boundary automaticamente
       },
-      body: apiFormData,
+      body: formData // Invia direttamente il formData
     });
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Errore durante il remix');
 
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Remix error:', error);
-    return NextResponse.json(
-      { error: 'Errore durante il remix dell\'immagine' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
