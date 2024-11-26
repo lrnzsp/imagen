@@ -17,32 +17,33 @@ export default function Home() {
     setError(null);
 
     try {
-      const endpoint = imageFile ? '/api/remix' : '/api/generate';
-      
+      let res;
       if (imageFile) {
+        // Richiesta remix con immagine
         const formData = new FormData();
         formData.append('image_file', imageFile);
         formData.append('prompt', prompt);
         formData.append('image_weight', imageWeight.toString());
 
-        const res = await fetch(endpoint, {
+        res = await fetch('/api/remix', {
           method: 'POST',
           body: formData
         });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Errore durante il remix');
-        setImageUrl(data.data[0].url);
       } else {
-        const res = await fetch(endpoint, {
+        // Richiesta generate senza immagine
+        res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt })
         });
+      }
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
-        setImageUrl(data.data[0].url);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Errore durante l\'elaborazione');
+      }
+      
+      setImageUrl(data.data[0].url);
       }
     } catch (err) {
       setError(err.message);
