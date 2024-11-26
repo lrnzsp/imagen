@@ -1,4 +1,6 @@
+```javascript
 'use client';
+
 import { useState, useRef } from 'react';
 
 export default function Home() {
@@ -6,42 +8,35 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
-  const [imageWeight, setImageWeight] = useState(50);
+  const [imageWeight, setImageWeight] = useState(0.5); // Default image weight
+  const [referenceImage, setReferenceImage] = useState(null);
   const fileInputRef = useRef(null);
+
 
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const file = fileInputRef.current.files[0];
-    if (!file) {
-      setError("Seleziona un'immagine di riferimento.");
-      setLoading(false);
-      return;
-    }
-
     try {
       const formData = new FormData();
-      formData.append('image_file', file);
-      formData.append(
-        'image_request',
-        JSON.stringify({
-          prompt,
-          aspect_ratio: 'ASPECT_1_1', // Puoi cambiare l'aspect ratio qui
-          image_weight: imageWeight,
-          magic_prompt_option: 'ON', // o OFF
-          model: 'V_2', // o V_1, etc.
-        })
-      );
+      formData.append('prompt', prompt);
+      formData.append('image_weight', imageWeight); 
+      if (referenceImage) {
+        formData.append('reference_image', referenceImage);
+      }
 
-      const res = await fetch('/api/remix', { // Chiama la nuova route /api/remix
+      const res = await fetch('/api/generate', {
         method: 'POST',
-        body: formData,
+        body: formData, // Send FormData directly
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore durante il remix');
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Errore durante la generazione');
+      }
+
       setImageUrl(data.data[0].url);
     } catch (err) {
       setError(err.message);
@@ -50,62 +45,60 @@ export default function Home() {
     }
   }
 
+  const handleImageChange = (event) => {
+    setReferenceImage(event.target.files[0]);
+  };
+
+
   return (
     <main className="p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold mb-8 text-center">
-          Remix di Immagini
-        </h1>
+        {/* ... (rest of the code) */}
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <input
-            type="text"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Descrivi le modifiche..."
-            className="w-full p-2 border rounded"
-            required
-          />
+          {/* ... (input and button) */}
+
+           {/* Reference Image Upload */}
           <div>
-            <label htmlFor="imageWeight">Image Weight: {imageWeight}</label>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              accept="image/*" 
+              className="mt-2"
+            />
+            {referenceImage && (
+              <p className="text-sm mt-1">
+                File selezionato: {referenceImage.name}
+              </p>
+            )}
+            <button type="button" onClick={() => {setReferenceImage(null); if(fileInputRef.current) fileInputRef.current.value = null;}} className="mt-2 text-red-500 text-sm hover:underline">Rimuovi Immagine</button> {/* Clear button */}
+
+
+          </div>
+
+           {/* Image Weight Slider */}
+          <div className="flex items-center space-x-2">
+            <label htmlFor="imageWeight" className="text-sm">Image Weight:</label>
             <input
               type="range"
               id="imageWeight"
               name="imageWeight"
-              min="1"
-              max="100"
+              min="0"
+              max="1"
+              step="0.1"
               value={imageWeight}
-              onChange={(e) => setImageWeight(parseInt(e.target.value, 10))}
-              className="w-full"
+              onChange={(e) => setImageWeight(parseFloat(e.target.value))}
+              className="w-full" 
             />
+            <span className="text-sm">{imageWeight}</span>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
-          >
-            {loading ? 'Remix in corso...' : 'Remix'}
-          </button>
+
+
+          {/* ... (rest of the form) */}
         </form>
-        {error && (
-          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
-            {error}
-          </div>
-        )}
-        {imageUrl && (
-          <div className="mt-8">
-            <img
-              src={imageUrl}
-              alt="Immagine remixata"
-              className="w-full rounded shadow-lg"
-            />
-          </div>
-        )}
+
+        {/* ... (rest of the code) */}
       </div>
     </main>
   );
