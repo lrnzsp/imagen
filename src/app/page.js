@@ -1,85 +1,79 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [generatedImage, setGeneratedImage] = useState('');
+  const [error, setError] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
-  const generateImage = async () => {
-    if (!prompt) {
-      setError('Per favore, inserisci un prompt testuale.');
-      return;
-    }
-
+  async function handleSubmit(e) {
+    e.preventDefault();
     setLoading(true);
-    setError('');
+    setError(null);
 
     try {
-      const response = await fetch('/api/generate', {
+      const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Errore durante la generazione dell\'immagine');
-      }
-
-      setGeneratedImage(data.data[0].url);
-    } catch (error) {
-      console.error('Error details:', error);
-      setError(error.message);
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
+      
+      setImageUrl(data.data[0].url);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto">
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
+    <main className="p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold mb-8 text-center">
           Generatore di Immagini
         </h1>
 
-        <div className="space-y-6">
-          <div className="flex gap-4">
-            <input
-              type="text"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Descrivi l'immagine che vuoi generare..."
-              className="flex-1 p-3 border border-gray-300 rounded-md shadow-sm"
-            />
-            <button 
-              onClick={generateImage}
-              disabled={loading}
-              className="px-6 py-3 bg-blue-600 text-white rounded-md shadow-sm disabled:bg-gray-400"
-            >
-              {loading ? 'Generazione...' : 'Genera'}
-            </button>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Descrivi l'immagine..."
+            className="w-full p-2 border rounded"
+            required
+          />
+          
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
+          >
+            {loading ? 'Generazione...' : 'Genera Immagine'}
+          </button>
+        </form>
+
+        {error && (
+          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div className="p-4 bg-red-50 text-red-700 rounded-md">
-              {error}
-            </div>
-          )}
-
-          {generatedImage && (
-            <div className="mt-8">
-              <img
-                src={generatedImage}
-                alt="Immagine generata"
-                className="w-full rounded-lg shadow-lg"
-              />
-            </div>
-          )}
-        </div>
+        {imageUrl && (
+          <div className="mt-8">
+            <img 
+              src={imageUrl} 
+              alt="Immagine generata"
+              className="w-full rounded shadow-lg" 
+            />
+          </div>
+        )}
       </div>
-    </div>
+    </main>
   );
 }
