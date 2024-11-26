@@ -1,122 +1,54 @@
-'use client';
+import { NextResponse } from 'next/server';
 
-import { useState } from 'react';
+export const runtime = 'edge';
 
-export default function Home() {
-  const [prompt, setPrompt] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [editing, setEditing] = useState(false); // Add editing state
+export async function POST(req) {
+  try {
+    const { prompt, editing, imageUrl } = await req.json(); // Receive editing flag and imageUrl
+    let requestBody;
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    if (editing && imageUrl) {
+      requestBody = {
+        image_request: {
+          prompt,
+          aspect_ratio: "ASPECT_1_1",
+          model: "V_2",
+          magic_prompt_option: "AUTO",
+          use_image_strength: true, // Enable image strength for remix
+          image_strength: 0.4, // You may tweak this value
+          init_image: imageUrl // Initial image for remix
+        }
+      };
 
-    try {
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, editing }) // Send editing flag
-      });
+    } else {
+      requestBody = {
+        image_request: {
+          prompt,
+          aspect_ratio: "ASPECT_1_1",
+          model: "V_2",
+          magic_prompt_option: "AUTO"
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
-
-      setImageUrl(data.data[0].url);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-      setEditing(false); // Reset editing after submission
+        }
+      };
     }
+
+
+
+
+
+    const res = await fetch('https://api.ideogram.ai/generate', {
+      method: 'POST',
+      headers: {
+        'Api-Key': 'cTwZUoIc3Pse-EImC28fix8cWUWtB6CBdbRBRUny5KXjC00REAircBryE7r30G2fUxyk--vDBksFyB0BwnSAUg',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    const data = await res.json();
+    return NextResponse.json(data);
+
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
-
-
-  const handleRemix = async () => {
-    if (!imageUrl) return;
-
-    setEditing(true); // Set editing mode before sending remix request
-
-
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, editing: true, imageUrl }) // Send editing flag and image URL
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
-      setImageUrl(data.data[0].url);
-    } catch (err) {
-
-      setError(err.message);
-    } finally {
-      setLoading(false);
-      setEditing(false);
-
-    }
-  };
-
-
-
-  return (
-    <main className="p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold mb-8 text-center">
-          Generatore di Immagini
-        </h1>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Descrivi l'immagine..."
-            className="w-full p-2 border rounded"
-            required
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
-          >
-            {loading ? 'Generazione...' : 'Genera Immagine'}
-          </button>
-
-          {imageUrl && (
-            <button
-              onClick={handleRemix}
-              disabled={loading}
-              className="w-full bg-green-500 text-white p-2 rounded disabled:bg-gray-400 mt-2"
-            >
-              {loading ? 'Remixing...' : 'Remix'}
-            </button>
-          )}
-        </form>
-
-        {error && (
-          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
-            {error}
-          </div>
-        )}
-
-        {imageUrl && (
-          <div className="mt-8">
-            <img
-              src={imageUrl}
-              alt="Immagine generata"
-              className="w-full rounded shadow-lg"
-            />
-          </div>
-        )}
-      </div>
-    </main>
-  );
 }
