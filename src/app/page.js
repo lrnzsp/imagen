@@ -1,4 +1,108 @@
-<main className="min-h-screen bg-black text-white p-8">
+'use client';
+
+import { useState } from 'react';
+
+export default function Home() {
+  // Stati per l'applicazione
+  const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imageWeight, setImageWeight] = useState(50);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
+  const [colorPalette, setColorPalette] = useState('');
+
+  // Costanti per i selettori
+  const aspectRatioOptions = {
+    'ASPECT_1_1': '1:1 Quadrato',
+    'ASPECT_10_16': '10:16 Verticale',
+    'ASPECT_16_10': '16:10 Panoramico',
+    'ASPECT_9_16': '9:16 Mobile',
+    'ASPECT_16_9': '16:9 Widescreen',
+    'ASPECT_3_2': '3:2 Fotografia',
+    'ASPECT_2_3': '2:3 Ritratto',
+    'ASPECT_4_3': '4:3 Standard',
+    'ASPECT_3_4': '3:4 Verticale',
+    'ASPECT_1_3': '1:3 Banner Verticale',
+    'ASPECT_3_1': '3:1 Banner Orizzontale'
+  };
+
+  const colorPalettes = {
+    '': 'Nessuna palette',
+    'EMBER': 'Ember',
+    'FRESH': 'Fresh',
+    'JUNGLE': 'Jungle',
+    'MAGIC': 'Magic',
+    'MELON': 'Melon',
+    'MOSAIC': 'Mosaic',
+    'PASTEL': 'Pastel',
+    'ULTRAMARINE': 'Ultramarine'
+  };
+
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+    }
+  }
+
+  function clearImage() {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setImageFile(null);
+    setPreviewUrl(null);
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      let res;
+      
+      if (imageFile) {
+        // Se c'è un'immagine, usa il remix
+        const formData = new FormData();
+        formData.append('image_file', imageFile);
+        formData.append('prompt', prompt);
+        formData.append('image_weight', imageWeight.toString());
+        formData.append('aspectRatio', aspectRatio);
+
+        res = await fetch('/api/remix', {
+          method: 'POST',
+          body: formData
+        });
+      } else {
+        // Altrimenti usa la generazione normale
+        res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            prompt,
+            aspectRatio,
+            colorPalette
+          })
+        });
+      }
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore durante l\'elaborazione');
+      setImageUrl(data.data[0].url);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+   <main className="min-h-screen bg-black text-white p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-5xl mb-16 text-center title-font tracking-wider">
           IMAGEN
