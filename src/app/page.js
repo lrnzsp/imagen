@@ -12,7 +12,6 @@ export default function Home() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
   const [colorPalette, setColorPalette] = useState('');
-
   const [isOpenPalette, setIsOpenPalette] = useState(false);
 
   const aspectRatioOptions = {
@@ -30,7 +29,10 @@ export default function Home() {
   };
 
   const colorPalettes = {
-    '': { name: 'Nessuna palette', colors: [] },
+    '': { 
+      name: 'Nessuna palette', 
+      colors: [] 
+    },
     'EMBER': { 
       name: 'Ember',
       colors: ['#FF4400', '#FF7744', '#FF9977', '#FFBB99']
@@ -105,7 +107,7 @@ export default function Home() {
         res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ 
+          body: JSON.stringify({ 
             image_request: {
               prompt,
               aspect_ratio: aspectRatio,
@@ -119,14 +121,24 @@ export default function Home() {
       }
 
       const data = await res.json();
+      console.log('API Response:', data);
+      
       if (!res.ok) throw new Error(data.error || 'Errore durante l\'elaborazione');
+      
+      if (!data || !data.data || !data.data[0] || !data.data[0].url) {
+        throw new Error('Risposta API non valida: formato inatteso');
+      }
+      
       setImageUrl(data.data[0].url);
     } catch (err) {
+      console.error('Error details:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }
+
+  const selectedPalette = colorPalettes[colorPalette] || colorPalettes[''];
 
   return (
     <main className="min-h-screen bg-black text-white p-8">
@@ -230,18 +242,49 @@ export default function Home() {
                   <label className="block text-sm font-medium mb-1">
                     Palette Colori
                   </label>
-                  <select
-                    value={colorPalette}
-                    onChange={(e) => {
-                      console.log('Palette selezionata:', e.target.value);
-                      setColorPalette(e.target.value);
-                    }}
-                    className="w-full p-2 bg-black border border-white rounded-lg text-white focus:ring-2 focus:ring-white transition-all duration-300"
-                  >
-                    {Object.entries(colorPalettes).map(([value, label]) => (
-                      <option key={value} value={value} className="bg-black">{label}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <div
+                      onClick={() => setIsOpenPalette(!isOpenPalette)}
+                      className="w-full p-2 bg-black border border-white rounded-lg text-white cursor-pointer hover:bg-white/5 transition-all duration-300 flex items-center gap-2"
+                    >
+                      <div className="flex gap-1">
+                        {selectedPalette.colors.map((color, index) => (
+                          <span 
+                            key={index} 
+                            className="inline-block w-3 h-3 rounded-sm"
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                      <span>{selectedPalette.name}</span>
+                    </div>
+                    
+                    {isOpenPalette && (
+                      <div className="absolute z-50 w-full mt-1 bg-black border border-white rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        {Object.entries(colorPalettes).map(([value, palette]) => (
+                          <div
+                            key={value}
+                            onClick={() => {
+                              setColorPalette(value);
+                              setIsOpenPalette(false);
+                            }}
+                            className="p-2 hover:bg-white/5 cursor-pointer flex items-center gap-2"
+                          >
+                            <div className="flex gap-1">
+                              {palette.colors.map((color, index) => (
+                                <span 
+                                  key={index}
+                                  className="inline-block w-3 h-3 rounded-sm"
+                                  style={{ backgroundColor: color }}
+                                />
+                              ))}
+                            </div>
+                            <span>{palette.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
