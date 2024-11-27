@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 export default function Home() {
-  // Stati per l'applicazione
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -14,7 +13,6 @@ export default function Home() {
   const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
   const [colorPalette, setColorPalette] = useState('');
 
-  // Costanti per i selettori
   const aspectRatioOptions = {
     'ASPECT_1_1': '1:1 Quadrato',
     'ASPECT_10_16': '10:16 Verticale',
@@ -67,7 +65,6 @@ export default function Home() {
       let res;
       
       if (imageFile) {
-        // Se c'è un'immagine, usa il remix
         const formData = new FormData();
         formData.append('image_file', imageFile);
         formData.append('prompt', prompt);
@@ -78,7 +75,6 @@ export default function Home() {
           body: formData
         });
       } else {
-        // Altrimenti usa la generazione normale
         res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -101,16 +97,15 @@ export default function Home() {
   }
 
   return (
-    <main className="p-8">
+    <main className="min-h-screen bg-black text-white p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold mb-8 text-center">
+        <h1 className="text-3xl font-extrabold mb-8 text-center text-blue-400">
           Generatore di Immagini
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Area upload immagine */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium">
               Immagine di riferimento (opzionale)
             </label>
             <div className="flex items-center gap-2">
@@ -123,7 +118,7 @@ export default function Home() {
               />
               <label
                 htmlFor="file-upload"
-                className="cursor-pointer bg-white px-4 py-2 border rounded hover:bg-gray-50"
+                className="cursor-pointer bg-gray-800 px-4 py-2 border border-gray-600 rounded text-white hover:bg-gray-700"
               >
                 Carica immagine
               </label>
@@ -131,7 +126,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={clearImage}
-                  className="px-2 py-1 text-red-600 hover:bg-red-50 rounded"
+                  className="px-2 py-1 text-red-600 hover:bg-red-700 rounded"
                 >
                   Rimuovi
                 </button>
@@ -142,13 +137,12 @@ export default function Home() {
                 <img
                   src={previewUrl}
                   alt="Anteprima"
-                  className="w-full max-h-48 object-contain rounded border"
+                  className="w-full max-h-48 object-contain rounded border border-gray-600"
                 />
               </div>
             )}
           </div>
 
-          {/* Slider peso immagine - visibile solo se c'è un'immagine */}
           {imageFile && (
             <div className="space-y-2">
               <label className="block text-sm font-medium">
@@ -165,18 +159,17 @@ export default function Home() {
             </div>
           )}
 
-          {/* Opzioni di generazione - visibili solo quando NON c'è un'immagine caricata */}
           {!imageFile && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium">
                     Rapporto d&apos;aspetto
                   </label>
                   <select
                     value={aspectRatio}
                     onChange={(e) => setAspectRatio(e.target.value)}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
                   >
                     {Object.entries(aspectRatioOptions).map(([value, label]) => (
                       <option key={value} value={value}>{label}</option>
@@ -185,13 +178,13 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium">
                     Palette colori
                   </label>
                   <select
                     value={colorPalette}
                     onChange={(e) => setColorPalette(e.target.value)}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
                   >
                     {Object.entries(colorPalettes).map(([value, label]) => (
                       <option key={value} value={value}>{label}</option>
@@ -207,21 +200,21 @@ export default function Home() {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Descrivi l'immagine..."
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
             required
           />
           
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
+            className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400 hover:bg-blue-600"
           >
             {loading ? 'Elaborazione...' : (imageFile ? 'Remix Immagine' : 'Genera Immagine')}
           </button>
         </form>
 
         {error && (
-          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
+          <div className="mt-4 p-4 bg-red-700 text-white rounded">
             {error}
           </div>
         )}
@@ -231,7 +224,7 @@ export default function Home() {
             <img 
               src={imageUrl} 
               alt="Immagine generata"
-              className="w-full rounded shadow-lg" 
+              className="w-full rounded shadow-lg border border-gray-600" 
             />
           </div>
         )}
