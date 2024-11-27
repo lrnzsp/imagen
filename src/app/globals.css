@@ -1,45 +1,60 @@
-/* globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 10, 10, 20;
+}
 
 body {
-    background-color: #000; /* Sfondo nero */
-    color: #fff; /* Testo bianco per contrasto */
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    margin: 0;
+/* Stili personalizzati per lo slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #4a5568;
+  outline: none;
 }
 
-p {
-    font-weight: 400;
-    margin: 0 0 1rem 0;
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-a {
-    color: #1e90ff;
-    text-decoration: none;
-    transition: color 0.3s ease;
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
 }
 
-a:hover {
-    color: #00bfff;
+/* Stili personalizzati per la scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Pulsanti */
-.btn {
-    background-color: #1f1f1f;
-    border: 1px solid #333;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.btn:hover {
-    background-color: #333;
-    transform: scale(1.05);
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
