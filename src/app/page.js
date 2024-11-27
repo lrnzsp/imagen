@@ -9,7 +9,29 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imageWeight, setImageWeight] = useState(50);
-  const [previewUrl, setPreviewUrl] = useState(null);  // Aggiunto questo stato
+  const [previewUrl, setPreviewUrl] = useState(null);
+  // Nuovi stati per le opzioni di generazione
+  const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
+  const [negativePrompt, setNegativePrompt] = useState('');
+  const [colorPalette, setColorPalette] = useState('');
+
+  // Costanti per i selettori
+  const aspectRatios = {
+    'ASPECT_1_1': '1:1 Quadrato',
+    'ASPECT_4_3': '4:3 Landscape',
+    'ASPECT_3_4': '3:4 Verticale',
+    'ASPECT_16_9': '16:9 Widescreen',
+    'ASPECT_9_16': '9:16 Mobile'
+  };
+
+  const colorPalettes = {
+    '': 'Nessuna palette',
+    'VIBRANT': 'Vibrante',
+    'MUTED': 'Tenue',
+    'WARM': 'Calda',
+    'COOL': 'Fredda',
+    'PASTEL': 'Pastello'
+  };  // Aggiunto questo stato
 
   function handleFileChange(e) {
     const file = e.target.files[0];
@@ -143,6 +165,56 @@ export default function Home() {
                 onChange={(e) => setImageWeight(parseInt(e.target.value))}
                 className="w-full"
               />
+            </div>
+          )}
+
+          {/* Opzioni di generazione - visibili solo quando NON c'è un'immagine caricata */}
+          {!imageFile && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Rapporto d'aspetto
+                  </label>
+                  <select
+                    value={aspectRatio}
+                    onChange={(e) => setAspectRatio(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  >
+                    {Object.entries(aspectRatios).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Palette colori
+                  </label>
+                  <select
+                    value={colorPalette}
+                    onChange={(e) => setColorPalette(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  >
+                    {Object.entries(colorPalettes).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Prompt negativo (opzionale)
+                </label>
+                <input
+                  type="text"
+                  value={negativePrompt}
+                  onChange={(e) => setNegativePrompt(e.target.value)}
+                  placeholder="Elementi da escludere dall'immagine..."
+                  className="w-full p-2 border rounded"
+                />
+              </div>
             </div>
           )}
 
