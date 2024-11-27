@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 export default function Home() {
+  // Stati per l'applicazione
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,44 +12,10 @@ export default function Home() {
   const [imageWeight, setImageWeight] = useState(50);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
-  const [negativePrompt, setNegativePrompt] = useState('');
   const [colorPalette, setColorPalette] = useState('');
 
   // Costanti per i selettori
   const aspectRatioOptions = {
-    'ASPECT_1_1': '1:1 Quadrato',
-    'ASPECT_10_16': '10:16 Verticale',
-    'ASPECT_16_10': '16:10 Panoramico',
-    'ASPECT_9_16': '9:16 Mobile',
-    'ASPECT_16_9': '16:9 Widescreen',
-    'ASPECT_3_2': '3:2 Fotografia',
-    'ASPECT_2_3': '2:3 Ritratto',
-    'ASPECT_4_3': '4:3 Standard',
-    'ASPECT_3_4': '3:4 Verticale',
-    'ASPECT_1_3': '1:3 Banner Verticale',
-    'ASPECT_3_1': '3:1 Banner Orizzontale'
-  };
-  const [imageFile, setImageFile] = useState(null);
-  const [imageWeight, setImageWeight] = useState(50);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  // Nuovi stati per le opzioni di generazione
-  const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
-  const [negativePrompt, setNegativePrompt] = useState('');
-  const [colorPalette, setColorPalette] = useState('');
-
-  const styles = {
-    'AUTO': 'Automatico',
-    'GENERAL': 'Generale',
-    'REALISTIC': 'Realistico',
-    'DESIGN': 'Design',
-    'RENDER_3D': '3D Render',
-    'ANIME': 'Anime'
-  };
-  
-  // Stati aggiuntivi per i nuovi controlli
-  const [styleType, setStyleType] = useState('REALISTIC');
-  const [seed, setSeed] = useState('');
-  const aspectRatios = {
     'ASPECT_1_1': '1:1 Quadrato',
     'ASPECT_10_16': '10:16 Verticale',
     'ASPECT_16_10': '16:10 Panoramico',
@@ -72,7 +39,7 @@ export default function Home() {
     'MOSAIC': 'Mosaic',
     'PASTEL': 'Pastel',
     'ULTRAMARINE': 'Ultramarine'
-  };  // Aggiunto questo stato
+  };
 
   function handleFileChange(e) {
     const file = e.target.files[0];
@@ -117,7 +84,8 @@ export default function Home() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             prompt,
-            aspectRatio 
+            aspectRatio,
+            colorPalette
           })
         });
       }
@@ -125,28 +93,11 @@ export default function Home() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Errore durante l\'elaborazione');
       setImageUrl(data.data[0].url);
-
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }
-
-  function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  }
-
-  function clearImage() {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    setImageFile(null);
-    setPreviewUrl(null);
   }
 
   return (
@@ -157,6 +108,7 @@ export default function Home() {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Area upload immagine */}
           <div className="space-y-2">
             <label className="block text-sm font-medium mb-2">
               Immagine di riferimento (opzionale)
@@ -196,6 +148,7 @@ export default function Home() {
             )}
           </div>
 
+          {/* Slider peso immagine - visibile solo se c'è un'immagine */}
           {imageFile && (
             <div className="space-y-2">
               <label className="block text-sm font-medium">
@@ -218,7 +171,7 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Rapporto d'aspetto
+                    Rapporto d&apos;aspetto
                   </label>
                   <select
                     value={aspectRatio}
@@ -245,19 +198,6 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Prompt negativo (opzionale)
-                </label>
-                <input
-                  type="text"
-                  value={negativePrompt}
-                  onChange={(e) => setNegativePrompt(e.target.value)}
-                  placeholder="Elementi da escludere dall'immagine..."
-                  className="w-full p-2 border rounded"
-                />
               </div>
             </div>
           )}
