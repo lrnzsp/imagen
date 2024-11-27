@@ -79,10 +79,10 @@ export default function Home() {
         res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+                      body: JSON.stringify({ 
             prompt,
             aspectRatio,
-            colorPalette
+            colorPalette: colorPalette || undefined
           })
         });
       }
@@ -197,7 +197,7 @@ export default function Home() {
 
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Palette
+                    Palette Colori
                   </label>
                   <select
                     value={colorPalette}
