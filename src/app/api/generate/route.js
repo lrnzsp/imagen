@@ -4,7 +4,7 @@ export const runtime = 'edge';
 
 export async function POST(req) {
   try {
-    const { prompt } = await req.json();
+    const { prompt, aspectRatio } = await req.json();
 
     const res = await fetch('https://api.ideogram.ai/generate', {
       method: 'POST',
@@ -15,7 +15,7 @@ export async function POST(req) {
       body: JSON.stringify({
         image_request: {
           prompt,
-          aspect_ratio: "ASPECT_1_1",
+          aspect_ratio: aspectRatio, // Usa l'aspect ratio selezionato
           model: "V_2",
           magic_prompt_option: "ON",
           style_type: "REALISTIC"
