@@ -72,6 +72,7 @@ export default function Home() {
         formData.append('image_file', imageFile);
         formData.append('prompt', prompt);
         formData.append('image_weight', imageWeight.toString());
+        formData.append('aspectRatio', aspectRatio);
 
         res = await fetch('/api/remix', {
           method: 'POST',
@@ -148,20 +149,37 @@ export default function Home() {
             )}
           </div>
 
-          {/* Slider peso immagine */}
+          {/* Slider peso immagine e aspect ratio per remix */}
           {imageFile && (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-300">
-                Peso dell&apos;immagine: {imageWeight}%
-              </label>
-              <input
-                type="range"
-                min="1"
-                max="100"
-                value={imageWeight}
-                onChange={(e) => setImageWeight(parseInt(e.target.value))}
-                className="w-full accent-blue-500"
-              />
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Peso dell&apos;immagine: {imageWeight}%
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  value={imageWeight}
+                  onChange={(e) => setImageWeight(parseInt(e.target.value))}
+                  className="w-full accent-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-300">
+                  Formato Output
+                </label>
+                <select
+                  value={aspectRatio}
+                  onChange={(e) => setAspectRatio(e.target.value)}
+                  className="w-full p-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                >
+                  {Object.entries(aspectRatioOptions).map(([value, label]) => (
+                    <option key={value} value={value} className="bg-gray-800">{label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           )}
 
