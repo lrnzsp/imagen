@@ -195,23 +195,23 @@ export default function Home() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Palette
-                  </label>
-                  <select
-                    value={colorPalette}
-                    onChange={(e) => setColorPalette(e.target.value)}
-                    className="w-full p-2 bg-black border border-white rounded-lg text-white focus:ring-2 focus:ring-white transition-all duration-300"
-                  >
-                    {Object.entries(colorPalettes).map(([value, label]) => (
-                      <option key={value} value={value} className="bg-black">{label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
+               // <div>
+                //  <label className="block text-sm font-medium mb-1">
+               //     Palette
+              //    </label>
+             //     <select
+      //              value={colorPalette}
+      //              onChange={(e) => setColorPalette(e.target.value)}
+      //              className="w-full p-2 bg-black border border-white rounded-lg text-white focus:ring-2 focus:ring-white transition-all duration-300"
+     //             >
+     //               {Object.entries(colorPalettes).map(([value, label]) => (
+     //                 <option key={value} value={value} className="bg-black">{label}</option>
+     //               ))}
+     //             </select>
+     //           </div>
+     //         </div>
+     //       </div>
+     //     )}
 
           <div className="space-y-2">
             <input
