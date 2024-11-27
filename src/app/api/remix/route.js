@@ -8,11 +8,12 @@ export async function POST(req) {
     const imageFile = formData.get('image_file');
     const prompt = formData.get('prompt');
     const imageWeight = formData.get('image_weight');
+    const aspectRatio = formData.get('aspectRatio');
 
     const form = new FormData();
     form.append('image_request', JSON.stringify({
       prompt: prompt,
-      aspect_ratio: "ASPECT_1_1",
+      aspect_ratio: aspectRatio,
       image_weight: parseInt(imageWeight),
       magic_prompt_option: "ON",
       model: "V_2"
