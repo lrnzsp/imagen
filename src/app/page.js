@@ -38,31 +38,31 @@ export default function Home() {
       colors: ['#FF4400', '#FF7744', '#FF9977', '#FFBB99']
     },
     'FRESH': {
-      name: 'Fresh',
+      
       colors: ['#00CC77', '#00DDAA', '#00BBFF', '#0099FF']
     },
     'JUNGLE': {
-      name: 'Jungle',
+      
       colors: ['#228833', '#55AA44', '#88CC66', '#AADD88']
     },
     'MAGIC': {
-      name: 'Magic',
+      
       colors: ['#6600FF', '#9944FF', '#CC88FF', '#EECCFF']
     },
     'MELON': {
-      name: 'Melon',
+      
       colors: ['#FF6677', '#FF99AA', '#FFCCDD', '#FFEEFF']
     },
     'MOSAIC': {
-      name: 'Mosaic',
+     
       colors: ['#FF4444', '#44FF44', '#4444FF', '#FFFF44']
     },
     'PASTEL': {
-      name: 'Pastel',
+      
       colors: ['#FFB3B3', '#B3FFB3', '#B3B3FF', '#FFFFB3']
     },
     'ULTRAMARINE': {
-      name: 'Ultramarine',
+      
       colors: ['#0033CC', '#0044FF', '#4477FF', '#99BBFF']
     }
   };
@@ -144,7 +144,7 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-4xl font-bold mb-12 text-center title-font">
-          AI Image Generator
+          IMAGE GENERATOR
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6 bg-black border border-white/20 rounded-2xl p-6">
