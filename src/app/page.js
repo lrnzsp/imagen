@@ -11,6 +11,23 @@ export default function Home() {
   const [imageWeight, setImageWeight] = useState(50);
   const [previewUrl, setPreviewUrl] = useState(null);  // Aggiunto questo stato
 
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+    }
+  }
+
+  function clearImage() {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setImageFile(null);
+    setPreviewUrl(null);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
