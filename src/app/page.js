@@ -15,54 +15,45 @@ export default function Home() {
   const [isOpenPalette, setIsOpenPalette] = useState(false);
 
   const aspectRatioOptions = {
-    'ASPECT_1_1': '1:1 Quadrato',
-    'ASPECT_10_16': '10:16 Verticale',
-    'ASPECT_16_10': '16:10 Panoramico',
+    'ASPECT_1_1': '1:1 Square',
+    'ASPECT_10_16': '10:16 Portrait',
+    'ASPECT_16_10': '16:10 Landscape',
     'ASPECT_9_16': '9:16 Mobile',
     'ASPECT_16_9': '16:9 Widescreen',
-    'ASPECT_3_2': '3:2 Fotografia',
-    'ASPECT_2_3': '2:3 Ritratto',
+    'ASPECT_3_2': '3:2 Photo',
+    'ASPECT_2_3': '2:3 Portrait',
     'ASPECT_4_3': '4:3 Standard',
-    'ASPECT_3_4': '3:4 Verticale',
-    'ASPECT_1_3': '1:3 Banner Verticale',
-    'ASPECT_3_1': '3:1 Banner Orizzontale'
+    'ASPECT_3_4': '3:4 Portrait',
+    'ASPECT_1_3': '1:3 Vertical Banner',
+    'ASPECT_3_1': '3:1 Horizontal Banner'
   };
 
   const colorPalettes = {
     '': { 
-      name: 'Nessuna palette', 
       colors: [] 
     },
-    'EMBER': { 
-      name: 'Ember',
+    'EMBER': {
       colors: ['#FF4400', '#FF7744', '#FF9977', '#FFBB99']
     },
     'FRESH': {
-      name: 'Fresh',
       colors: ['#00CC77', '#00DDAA', '#00BBFF', '#0099FF']
     },
     'JUNGLE': {
-      name: 'Jungle',
       colors: ['#228833', '#55AA44', '#88CC66', '#AADD88']
     },
     'MAGIC': {
-      name: 'Magic',
       colors: ['#6600FF', '#9944FF', '#CC88FF', '#EECCFF']
     },
     'MELON': {
-      name: 'Melon',
       colors: ['#FF6677', '#FF99AA', '#FFCCDD', '#FFEEFF']
     },
     'MOSAIC': {
-      name: 'Mosaic',
       colors: ['#FF4444', '#44FF44', '#4444FF', '#FFFF44']
     },
     'PASTEL': {
-      name: 'Pastel',
       colors: ['#FFB3B3', '#B3FFB3', '#B3B3FF', '#FFFFB3']
     },
     'ULTRAMARINE': {
-      name: 'Ultramarine',
       colors: ['#0033CC', '#0044FF', '#4477FF', '#99BBFF']
     }
   };
@@ -150,7 +141,7 @@ export default function Home() {
         <form onSubmit={handleSubmit} className="space-y-6 bg-black border border-white/20 rounded-2xl p-6">
           <div className="space-y-2">
             <label className="block text-sm font-medium mb-2">
-              Immagine di riferimento (opzionale)
+              Reference Image (optional)
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -164,7 +155,7 @@ export default function Home() {
                 htmlFor="file-upload"
                 className="cursor-pointer bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-200 transition-all duration-300"
               >
-                Carica immagine
+                Upload Image
               </label>
               {imageFile && (
                 <button
@@ -172,7 +163,7 @@ export default function Home() {
                   onClick={clearImage}
                   className="px-3 py-2 text-white border border-white rounded-lg hover:bg-white/10 transition-all duration-300"
                 >
-                  Rimuovi
+                  Remove
                 </button>
               )}
             </div>
@@ -191,7 +182,7 @@ export default function Home() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="block text-sm font-medium">
-                  Peso dell&apos;immagine: {imageWeight}%
+                  Image Weight: {imageWeight}%
                 </label>
                 <input
                   type="range"
@@ -205,7 +196,7 @@ export default function Home() {
               
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Formato Output
+                  Output Format
                 </label>
                 <select
                   value={aspectRatio}
@@ -225,7 +216,7 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Formato
+                    Format
                   </label>
                   <select
                     value={aspectRatio}
@@ -240,7 +231,7 @@ export default function Home() {
 
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Palette Colori
+                    Color Palette
                   </label>
                   <div className="relative">
                     <div
@@ -256,7 +247,6 @@ export default function Home() {
                           />
                         ))}
                       </div>
-                      <span>{selectedPalette.name}</span>
                     </div>
                     
                     {isOpenPalette && (
@@ -279,7 +269,7 @@ export default function Home() {
                                 />
                               ))}
                             </div>
-                            <span>{palette.name}</span>
+                  }
                           </div>
                         ))}
                       </div>
@@ -295,7 +285,7 @@ export default function Home() {
               type="text"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Descrivi l'immagine che vuoi generare..."
+              placeholder="Describe the image you want to generate..."
               className="w-full p-4 bg-black border border-white rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-white transition-all duration-300"
               required
             />
@@ -315,10 +305,10 @@ export default function Home() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Generazione in corso...
+                Generating...
               </span>
             ) : (
-              imageFile ? 'Remix Immagine' : 'Genera Immagine'
+              imageFile ? 'Remix Image' : 'Generate Image'
             )}
           </button>
         </form>
