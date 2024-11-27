@@ -223,43 +223,6 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Stile
-                  </label>
-                  <select
-                    value={styleType}
-                    onChange={(e) => setStyleType(e.target.value)}
-                    className="w-full p-2 border rounded"
-                  >
-                    {Object.entries(styles).map(([value, label]) => (
-                      <option key={value} value={value}>{label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Seed (opzionale)
-                  </label>
-                  <input
-                    type="number"
-                    value={seed}
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value);
-                      if (isNaN(value)) {
-                        setSeed('');
-                      } else if (value >= 0 && value <= 2147483647) {
-                        setSeed(value);
-                      }
-                    }}
-                    placeholder="Numero tra 0 e 2147483647"
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Prompt negativo (opzionale)
