@@ -1,7 +1,7 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'AI Image Generator',
+  title: 'IMAGEN',
   description: 'Genera immagini con AI',
 }
 
