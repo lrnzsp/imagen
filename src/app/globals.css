@@ -1,60 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Montserrat:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 10, 10, 20;
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Stili personalizzati per lo slider */
+.title-font {
+  font-family: 'Italiana', serif;
+}
+
+/* Stili slider minimalisti */
 input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: #4a5568;
-  outline: none;
+  height: 2px;
+  background: #ffffff;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
+  height: 12px;
+  width: 12px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: #ffffff;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-input[type="range"]::-webkit-slider-thumb:hover {
-  background: #2563eb;
-  transform: scale(1.1);
-}
-
-/* Stili personalizzati per la scrollbar */
+/* Stili scrollbar minimalisti */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #333333;
 }
