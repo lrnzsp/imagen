@@ -34,7 +34,7 @@ export default function Home() {
       colors: [] 
     },
     'EMBER': { 
-      name: 'Ember',
+      
       colors: ['#FF4400', '#FF7744', '#FF9977', '#FFBB99']
     },
     'FRESH': {
