@@ -28,17 +28,18 @@ export default function Home() {
     'ASPECT_3_1': '3:1 Banner Orizzontale'
   };
 
-  const colorPalettes = {
-    '': 'Nessuna palette',
-    'EMBER': 'Ember',
-    'FRESH': 'Fresh',
-    'JUNGLE': 'Jungle',
-    'MAGIC': 'Magic',
-    'MELON': 'Melon',
-    'MOSAIC': 'Mosaic',
-    'PASTEL': 'Pastel',
-    'ULTRAMARINE': 'Ultramarine'
-  };
+  // Temporaneamente rimosso - da riabilitare in futuro
+  // const colorPalettes = {
+  //   '': 'Nessuna palette',
+  //   'EMBER': 'Ember',
+  //   'FRESH': 'Fresh',
+  //   'JUNGLE': 'Jungle',
+  //   'MAGIC': 'Magic',
+  //   'MELON': 'Melon',
+  //   'MOSAIC': 'Mosaic',
+  //   'PASTEL': 'Pastel',
+  //   'ULTRAMARINE': 'Ultramarine'
+  // };
 
   function handleFileChange(e) {
     const file = e.target.files[0];
@@ -80,10 +81,10 @@ export default function Home() {
         res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+                      body: JSON.stringify({ 
             prompt,
-            aspectRatio,
-            colorPalette
+            aspectRatio
+            // colorPalette // Temporaneamente rimosso
           })
         });
       }
@@ -180,35 +181,7 @@ export default function Home() {
 
           {!imageFile && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Formato
-                  </label>
-                  <select
-                    value={aspectRatio}
-                    onChange={(e) => setAspectRatio(e.target.value)}
-                    className="w-full p-2 bg-black border border-white rounded-lg text-white focus:ring-2 focus:ring-white transition-all duration-300"
-                  >
-                    {Object.entries(aspectRatioOptions).map(([value, label]) => (
-                      <option key={value} value={value} className="bg-black">{label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Palette
-                  </label>
-                  <select
-                    value={colorPalette}
-                    onChange={(e) => setColorPalette(e.target.value)}
-                    className="w-full p-2 bg-black border border-white rounded-lg text-white focus:ring-2 focus:ring-white transition-all duration-300"
-                  >
-                    {Object.entries(colorPalettes).map(([value, label]) => (
-                      <option key={value} value={value} className="bg-black">{label}</option>
-                    ))}
-                  </select>
+           </select>
                 </div>
               </div>
             </div>
