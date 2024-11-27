@@ -15,22 +15,42 @@ export default function Home() {
   const [negativePrompt, setNegativePrompt] = useState('');
   const [colorPalette, setColorPalette] = useState('');
 
-  // Costanti per i selettori
+  const styles = {
+    'AUTO': 'Automatico',
+    'GENERAL': 'Generale',
+    'REALISTIC': 'Realistico',
+    'DESIGN': 'Design',
+    'RENDER_3D': '3D Render',
+    'ANIME': 'Anime'
+  };
+  
+  // Stati aggiuntivi per i nuovi controlli
+  const [styleType, setStyleType] = useState('REALISTIC');
+  const [seed, setSeed] = useState('');
   const aspectRatios = {
     'ASPECT_1_1': '1:1 Quadrato',
-    'ASPECT_4_3': '4:3 Landscape',
-    'ASPECT_3_4': '3:4 Verticale',
+    'ASPECT_10_16': '10:16 Verticale',
+    'ASPECT_16_10': '16:10 Panoramico',
+    'ASPECT_9_16': '9:16 Mobile',
     'ASPECT_16_9': '16:9 Widescreen',
-    'ASPECT_9_16': '9:16 Mobile'
+    'ASPECT_3_2': '3:2 Fotografia',
+    'ASPECT_2_3': '2:3 Ritratto',
+    'ASPECT_4_3': '4:3 Standard',
+    'ASPECT_3_4': '3:4 Verticale',
+    'ASPECT_1_3': '1:3 Banner Verticale',
+    'ASPECT_3_1': '3:1 Banner Orizzontale'
   };
 
   const colorPalettes = {
     '': 'Nessuna palette',
-    'VIBRANT': 'Vibrante',
-    'MUTED': 'Tenue',
-    'WARM': 'Calda',
-    'COOL': 'Fredda',
-    'PASTEL': 'Pastello'
+    'EMBER': 'Ember',
+    'FRESH': 'Fresh',
+    'JUNGLE': 'Jungle',
+    'MAGIC': 'Magic',
+    'MELON': 'Melon',
+    'MOSAIC': 'Mosaic',
+    'PASTEL': 'Pastel',
+    'ULTRAMARINE': 'Ultramarine'
   };  // Aggiunto questo stato
 
   function handleFileChange(e) {
@@ -200,6 +220,43 @@ export default function Home() {
                       <option key={value} value={value}>{label}</option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Stile
+                  </label>
+                  <select
+                    value={styleType}
+                    onChange={(e) => setStyleType(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  >
+                    {Object.entries(styles).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Seed (opzionale)
+                  </label>
+                  <input
+                    type="number"
+                    value={seed}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (isNaN(value)) {
+                        setSeed('');
+                      } else if (value >= 0 && value <= 2147483647) {
+                        setSeed(value);
+                      }
+                    }}
+                    placeholder="Numero tra 0 e 2147483647"
+                    className="w-full p-2 border rounded"
+                  />
                 </div>
               </div>
 
