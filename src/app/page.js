@@ -10,6 +10,27 @@ export default function Home() {
   const [imageFile, setImageFile] = useState(null);
   const [imageWeight, setImageWeight] = useState(50);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
+  const [negativePrompt, setNegativePrompt] = useState('');
+  const [colorPalette, setColorPalette] = useState('');
+
+  // Costanti per i selettori
+  const aspectRatioOptions = {
+    'ASPECT_1_1': '1:1 Quadrato',
+    'ASPECT_10_16': '10:16 Verticale',
+    'ASPECT_16_10': '16:10 Panoramico',
+    'ASPECT_9_16': '9:16 Mobile',
+    'ASPECT_16_9': '16:9 Widescreen',
+    'ASPECT_3_2': '3:2 Fotografia',
+    'ASPECT_2_3': '2:3 Ritratto',
+    'ASPECT_4_3': '4:3 Standard',
+    'ASPECT_3_4': '3:4 Verticale',
+    'ASPECT_1_3': '1:3 Banner Verticale',
+    'ASPECT_3_1': '3:1 Banner Orizzontale'
+  };
+  const [imageFile, setImageFile] = useState(null);
+  const [imageWeight, setImageWeight] = useState(50);
+  const [previewUrl, setPreviewUrl] = useState(null);
   // Nuovi stati per le opzioni di generazione
   const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
   const [negativePrompt, setNegativePrompt] = useState('');
@@ -94,7 +115,10 @@ export default function Home() {
         res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
+          body: JSON.stringify({ 
+            prompt,
+            aspectRatio 
+          })
         });
       }
 
@@ -201,7 +225,7 @@ export default function Home() {
                     onChange={(e) => setAspectRatio(e.target.value)}
                     className="w-full p-2 border rounded"
                   >
-                    {Object.entries(aspectRatios).map(([value, label]) => (
+                    {Object.entries(aspectRatioOptions).map(([value, label]) => (
                       <option key={value} value={value}>{label}</option>
                     ))}
                   </select>
