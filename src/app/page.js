@@ -1,4 +1,171 @@
-'use client';
+<main className="min-h-screen bg-black text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-5xl mb-16 text-center title-font tracking-wider">
+          IMAGEN
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Area upload immagine */}
+          <div className="space-y-4">
+            <label className="block text-xs uppercase tracking-widest mb-4">
+              Immagine di riferimento
+            </label>
+            <div className="flex items-center gap-4">
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+                id="file-upload"
+                accept="image/*"
+              />
+              <label
+                htmlFor="file-upload"
+                className="cursor-pointer px-6 py-3 border border-white/20 hover:border-white/40 transition-colors duration-300"
+              >
+                CARICA
+              </label>
+              {imageFile && (
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  className="px-4 py-3 text-white/60 hover:text-white/80 transition-colors duration-300"
+                >
+                  RIMUOVI
+                </button>
+              )}
+            </div>
+            {previewUrl && (
+              <div className="mt-6">
+                <img
+                  src={previewUrl}
+                  alt="Anteprima"
+                  className="w-full max-h-48 object-contain"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Controlli del remix */}
+          {imageFile && (
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <label className="block text-xs uppercase tracking-widest">
+                  Peso dell&apos;immagine: {imageWeight}%
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  value={imageWeight}
+                  onChange={(e) => setImageWeight(parseInt(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs uppercase tracking-widest mb-2">
+                  Formato Output
+                </label>
+                <select
+                  value={aspectRatio}
+                  onChange={(e) => setAspectRatio(e.target.value)}
+                  className="w-full p-3 bg-black border border-white/20 focus:border-white/40 outline-none transition-colors duration-300"
+                >
+                  {Object.entries(aspectRatioOptions).map(([value, label]) => (
+                    <option key={value} value={value} className="bg-black">{label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Opzioni di generazione */}
+          {!imageFile && (
+            <div className="space-y-8">
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest mb-2">
+                    Formato
+                  </label>
+                  <select
+                    value={aspectRatio}
+                    onChange={(e) => setAspectRatio(e.target.value)}
+                    className="w-full p-3 bg-black border border-white/20 focus:border-white/40 outline-none transition-colors duration-300"
+                  >
+                    {Object.entries(aspectRatioOptions).map(([value, label]) => (
+                      <option key={value} value={value} className="bg-black">{label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-widest mb-2">
+                    Palette
+                  </label>
+                  <select
+                    value={colorPalette}
+                    onChange={(e) => setColorPalette(e.target.value)}
+                    className="w-full p-3 bg-black border border-white/20 focus:border-white/40 outline-none transition-colors duration-300"
+                  >
+                    {Object.entries(colorPalettes).map(([value, label]) => (
+                      <option key={value} value={value} className="bg-black">{label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Prompt input */}
+          <div className="space-y-4">
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Descrivi l'immagine..."
+              className="w-full p-4 bg-black border border-white/20 focus:border-white/40 outline-none transition-colors duration-300 placeholder:text-white/40"
+              required
+            />
+          </div>
+          
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-white text-black py-4 font-light tracking-widest
+                     disabled:opacity-50 disabled:cursor-not-allowed
+                     hover:bg-white/90 transition-colors duration-300"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                ELABORAZIONE
+              </span>
+            ) : (
+              imageFile ? 'REMIX' : 'GENERA'
+            )}
+          </button>
+        </form>
+
+        {error && (
+          <div className="mt-8 p-4 border border-white/20 text-white/60">
+            {error}
+          </div>
+        )}
+
+        {imageUrl && (
+          <div className="mt-12">
+            <img 
+              src={imageUrl} 
+              alt="Immagine generata"
+              className="w-full" 
+            />
+          </div>
+        )}
+      </div>
+    </main>'use client';
 
 import { useState } from 'react';
 
