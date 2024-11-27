@@ -80,9 +80,14 @@ export default function Home() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ 
-            prompt,
-            aspectRatio,
-            colorPalette: colorPalette || undefined
+            image_request: {
+              prompt,
+              aspect_ratio: aspectRatio,
+              model: "V_2",
+              magic_prompt_option: "ON",
+              style_type: "REALISTIC",
+              color_palette: colorPalette ? { name: colorPalette } : undefined
+            }
           })
         });
       }
@@ -201,7 +206,10 @@ export default function Home() {
                   </label>
                   <select
                     value={colorPalette}
-                    onChange={(e) => setColorPalette(e.target.value)}
+                    onChange={(e) => {
+                      console.log('Palette selezionata:', e.target.value);
+                      setColorPalette(e.target.value);
+                    }}
                     className="w-full p-2 bg-black border border-white rounded-lg text-white focus:ring-2 focus:ring-white transition-all duration-300"
                   >
                     {Object.entries(colorPalettes).map(([value, label]) => (
