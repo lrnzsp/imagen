@@ -17,17 +17,32 @@ export default function Home() {
     setError(null);
 
     try {
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
+      let res;
+      
+      if (imageFile) {
+        // Se c'è un'immagine, usa il remix
+        const formData = new FormData();
+        formData.append('image_file', imageFile);
+        formData.append('prompt', prompt);
+        formData.append('image_weight', imageWeight.toString());
+
+        res = await fetch('/api/remix', {
+          method: 'POST',
+          body: formData
+        });
+      } else {
+        // Altrimenti usa la generazione normale
+        res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+      }
 
       const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.error || 'Errore durante la generazione');
-      
+      if (!res.ok) throw new Error(data.error || 'Errore durante l\'elaborazione');
       setImageUrl(data.data[0].url);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -128,7 +143,7 @@ export default function Home() {
             disabled={loading}
             className="w-full bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
           >
-            {loading ? 'Generazione...' : 'Genera Immagine'}
+            {loading ? 'Elaborazione...' : (imageFile ? 'Remix Immagine' : 'Genera Immagine')}
           </button>
         </form>
 
