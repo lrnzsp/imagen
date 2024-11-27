@@ -1,6 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Futura:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=ITC+Avant+Garde+Gothic+Std+Bold:wght@700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -13,23 +11,10 @@ body {
 }
 
 .title-font {
-  font-family: 'Futura', sans-serif;
-  font-weight: bold;
+  font-family: 'ITC Avant Garde Gothic Std Bold', sans-serif;
+  font-weight: 700;
 }
 
-button, input, select {
-  background-color: #ffffff;
-  color: #000000;
-  border: 1px solid #ffffff;
-}
-
-button:hover {
-  background-color: #000000;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-
-/* Slider and scrollbar styles */
 input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
@@ -55,5 +40,5 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333333;
+  background: #ffffff;
 }
