@@ -13,6 +13,8 @@ export default function Home() {
   const [aspectRatio, setAspectRatio] = useState('ASPECT_1_1');
   const [colorPalette, setColorPalette] = useState('');
 
+  const [isOpenPalette, setIsOpenPalette] = useState(false);
+
   const aspectRatioOptions = {
     'ASPECT_1_1': '1:1 Quadrato',
     'ASPECT_10_16': '10:16 Verticale',
@@ -28,15 +30,39 @@ export default function Home() {
   };
 
   const colorPalettes = {
-    '': 'Nessuna palette',
-    'EMBER': 'Ember',
-    'FRESH': 'Fresh',
-    'JUNGLE': 'Jungle',
-    'MAGIC': 'Magic',
-    'MELON': 'Melon',
-    'MOSAIC': 'Mosaic',
-    'PASTEL': 'Pastel',
-    'ULTRAMARINE': 'Ultramarine'
+    '': { name: 'Nessuna palette', colors: [] },
+    'EMBER': { 
+      name: 'Ember',
+      colors: ['#FF4400', '#FF7744', '#FF9977', '#FFBB99']
+    },
+    'FRESH': {
+      name: 'Fresh',
+      colors: ['#00CC77', '#00DDAA', '#00BBFF', '#0099FF']
+    },
+    'JUNGLE': {
+      name: 'Jungle',
+      colors: ['#228833', '#55AA44', '#88CC66', '#AADD88']
+    },
+    'MAGIC': {
+      name: 'Magic',
+      colors: ['#6600FF', '#9944FF', '#CC88FF', '#EECCFF']
+    },
+    'MELON': {
+      name: 'Melon',
+      colors: ['#FF6677', '#FF99AA', '#FFCCDD', '#FFEEFF']
+    },
+    'MOSAIC': {
+      name: 'Mosaic',
+      colors: ['#FF4444', '#44FF44', '#4444FF', '#FFFF44']
+    },
+    'PASTEL': {
+      name: 'Pastel',
+      colors: ['#FFB3B3', '#B3FFB3', '#B3B3FF', '#FFFFB3']
+    },
+    'ULTRAMARINE': {
+      name: 'Ultramarine',
+      colors: ['#0033CC', '#0044FF', '#4477FF', '#99BBFF']
+    }
   };
 
   function handleFileChange(e) {
